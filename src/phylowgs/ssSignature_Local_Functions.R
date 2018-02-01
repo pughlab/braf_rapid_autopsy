@@ -7,6 +7,8 @@ library(BSgenome.Hsapiens.UCSC.hg19)
 library(gridExtra)
 library(gplots)
 
+proj.dir <- getwd()
+
 ssSignature <- function(mutect.file,
                         output_dir,
                         pat = ".call_stats.keep",
@@ -20,22 +22,10 @@ ssSignature <- function(mutect.file,
                         hg38 = FALSE) { 
   
   
-  ## Add data frame of trinucleotide 
-  if(tri.counts.method == "V5UTR"){
-    tri.counts.method <- read.table("~/Desktop/PIES/tri.counts.exomeUTRv5.txt",
-                                    sep="\t",
-                                    header=TRUE)
-    
-    #print("Normalizing to Sureselect Exome+UTR V5 calculated tri-nucleotide occurences.")
-  }
-  
-  
-  #if (is.character(mutect.file)) cat(paste("Processing", names(mutect.file),"\n"))
-  #if (is.data.frame(mutect.file) & tolower(input_tool) == "oncotator") cat(paste("Processing",mutect.file$Tumor_Sample_Barcode[1],"\n"))
   
   ### Manually currated signature definitions from http://cancer.sanger.ac.uk/cosmic/signatures
   
-  etiologies_loc <- "~/Desktop/PIES/signature_etiologies.txt";
+  etiologies_loc <- paste(proj.dir,"/refs","/signature_etiologies.txt", sep = "")
   
   etiologies <- read.table(etiologies_loc,
                            sep="\t",header=TRUE);
@@ -180,180 +170,7 @@ ssSignature <- function(mutect.file,
     }
     
     
-    #print(s_full)
-    #print("stop here if just_pie!!!")
-    
-    #############################################################################################################
-    #############################################################################################################
-    #############################################################################################################
-    
-    
-    # full_Weights <- s_full$weights
-    # 
-    # 
-    # if(grepl("< 0.1 VAF",row.names(sig_in))[1]) {
-    #   s1 <- whichSignatures(tumor.ref = sig_in, sample.id = "< 0.1 VAF",
-    #                         signatures.ref = signatures.nature2013[1:21,], associated = c(),
-    #                         signatures.limit = NA, signature.cutoff = 0.06, contexts.needed = TRUE,
-    #                         tri.counts.method = tri.counts.method);
-    #  
-    #   VAF_low_Weights <- s1$weights
-    #   
-    #   no_low <- FALSE
-    #   
-    # } else no_low <- TRUE
-    # 
-    # s2 <- whichSignatures(tumor.ref = sig_in, sample.id = ">= 0.1 VAF",
-    #                       signatures.ref = signatures.nature2013[1:21,], associated = c(),
-    #                       signatures.limit = NA, signature.cutoff = 0.06, contexts.needed = TRUE,
-    #                       tri.counts.method = tri.counts.method);
-    # 
-    # VAF_high_Weights <- s2$weights
-    # 
-    # ## Only keep signatures with positive values
-    # 
-    # full_Weights <- full_Weights[,full_Weights[1,]>0, drop=FALSE]
-    # 
-    # 
-    # if(!no_low) VAF_low_Weights <- VAF_low_Weights[,VAF_low_Weights[1,]>0, drop=FALSE]
-    # VAF_high_Weights <- VAF_high_Weights[,VAF_high_Weights[1,]>0, drop=FALSE]
-    # 
-    # if(!no_low) if(class(VAF_low_Weights) == "data.frame") VAF_low_Weights <- VAF_low_Weights[order(VAF_low_Weights[1,], decreasing=TRUE)]
-    # if(class(VAF_high_Weights) == "data.frame") VAF_high_Weights <- VAF_high_Weights[order(VAF_high_Weights[1,], decreasing=TRUE)]
-    
-    ## Output some useful plots
-    
-    ## original and reconstructed signatures
-    
-    
-    
-    # pdf(paste(output_dir,"/", samplename,
-    #           "_Reconstructed_signature_ALL_mutations.pdf",sep=""),
-    #     height=11,width=8.5)
-    # deconstructSigs::plotSignatures(s_full)
-    # dev.off()
-    # 
-    # if(!no_low){
-    #   pdf(paste(output_dir,"/", samplename,
-    #             "_Reconstructed_signature_low_VAF_mutations.pdf",sep=""),
-    #       height=11,width=8.5)
-    #   deconstructSigs::plotSignatures(s1)
-    #   dev.off()
-    # }
-    # 
-    # pdf(paste(output_dir,"/", samplename,
-    #           "_Reconstructed_signature_high_VAF_mutations.pdf",sep=""),
-    #     height=11,width=8.5)
-    # deconstructSigs::plotSignatures(s2)
-    # dev.off()
-    # 
-    # pdf(paste(output_dir,"/", samplename,
-    #           "_Variant_Abundance_Plot.pdf",sep=""),
-    #     height=4,width=6)
-    # 
-    # print(plotVariantAbundance(sca_motifs,"cut_off_tumor_f"))
-    # 
-    # dev.off()
-    # 
-    
-    ## Include proposed etiologies for matching signatures
-    
-    # row.names(etiologies) <- etiologies$Signature
-    # 
-    # if(!no_low) { 
-    #   m_etiologies <- etiologies[unique(c(colnames(VAF_high_Weights),
-    #                                       colnames(VAF_low_Weights))),]
-    # } else {
-    #   m_etiologies <- etiologies[unique(c(colnames(VAF_high_Weights))),]
-    # }
-    # 
-    # full_etiologies <- etiologies[unique(c(colnames(full_Weights))),]
-    # 
-    # 
-    # ## Bug where pie cannot be drawn with just one signature
-    # if(!no_low) if(sum(s1$weight==1)==1) s1$unknown <- 0.0001;
-    # if(sum(s2$weight==1)==1) s2$unknown <- 0.0001;
-    
-    
-    #if(!ppt_pie){  
-      
-      # pdf(paste(output_dir,"/", samplename,
-      #           "_Mutation_Signature_Contributions_ALL_Mutations.pdf",sep=""),
-      #     height=8.5,width=11)
-      # layout(matrix(c(1,0,1,0), 2))
-      # custom_makePie(s_full, radius = pie_rad)
-      # pushViewport(viewport(y=.25,height=.5))
-      # grid.table(full_etiologies, rows = rep("",nrow(full_etiologies)))
-      # dev.off()
-      # 
-      # pdf(paste(output_dir,"/", samplename,
-      #           "_Mutation_Signature_Contributions_VAF_Separated.pdf",sep=""),
-      #     height=8.5,width=11)
-      # layout(matrix(c(1,0,2,0), 2))
-      # if(!no_low) makePie(s1)
-      # makePie(s2)
-      # pushViewport(viewport(y=.25,height=.5))
-      # grid.table(m_etiologies, rows = rep("",nrow(m_etiologies)))
-      # 
-      # dev.off()
-    #} else {
-      # Create a new powerpoint document
-  #     doc <- pptx()
-  #     # Add a new slide into the ppt document 
-  #     doc <- addSlide(doc, "Two Content" )
-  #     plot_function <- function(){
-  #       layout(matrix(c(1,0,2,0), 2))
-  #       if(!no_low) makePie(s1)
-  #       makePie(s2)
-  #       pushViewport(viewport(y=.25,height=.5))
-  #       grid.table(m_etiologies, rows = rep("",nrow(m_etiologies)))
-  #     }
-  #     doc <- addPlot(doc, plot_function, vector.graphic = TRUE )
-  #     
-  #     writeDoc(doc, file = paste(output_dir,"/", samplename,
-  #                                "_Mutation_Signature_Contributions_VAF_Separated.pptx",sep=""))
-  #     
-  #     
-  #     doc <- pptx()
-  #     # Add a new slide into the ppt document 
-  #     doc <- addSlide(doc, "Two Content" )
-  #     plot_function <- function(){
-  #       # layout(matrix(c(1,0,1,0), 2))
-  #       custom_makePie(s_full, radius = pie_rad)
-  #       # pushViewport(viewport(y=.25,height=.5))
-  #       # grid.table(full_etiologies, rows = rep("",nrow(full_etiologies)))
-  #     }
-  #     doc <- addPlot(doc, plot_function, vector.graphic = TRUE )
-  #     
-  #     writeDoc(doc, file = paste(output_dir,"/", samplename,
-  #                                "_Mutation_Signature_Contributions_ALL_Mutations.pptx",sep=""))
-  #   #}
-  #   
-  #   if(!no_low) VAF_low <- s1$weights
-  #   VAF_high <- s2$weights
-  #   
-  #   VAF_all <- s_full$weights
-  #   
-  #   
-  #   if(!no_low) row.names(VAF_low) <- samplename
-  #   row.names(VAF_high) <- samplename
-  #   
-  #   VAF_combined <- list(VAF_low = VAF_high,
-  #                        VAF_high = VAF_high,
-  #                        VAF_all = VAF_all)
-  #   
-  # } else {
-  #   blank <- signatures.nature2013[1:21,1,drop=FALSE]
-  #   colnames(blank) <- samplename
-  #   blank[,samplename] <- rep(NA,nrow(blank))
-  #   blank <- t(blank)
-  #   
-  #   VAF_combined <- list(VAF_low = blank,
-  #                        VAF_high = VAF_high,
-  #                        VAF_all = VAF_all)
   }
-  
-  #return(VAF_combined);
   
 }
 
@@ -388,67 +205,7 @@ msSignature <- function(mutect.files,
     rm(combined_weights_high_vaf)
   } 
   
-  # if(is.data.frame(mutect.files)) {
-  #   
-  #   if(tolower(input_tool)=="oncotator") {
-  #     samples <- unique(mutect.files$Tumor_Sample_Barcode)
-  #   } else {
-  #     samples <- unique(mutect.files$tumor_name)
-  #   }
-  #   
-  #   for (samp in samples) {
-  #     
-  #     if(tolower(input_tool)=="oncotator") {
-  #       mutect.file <- subset(mutect.files,Tumor_Sample_Barcode==samp)
-  #     } else {
-  #       mutect.file <- subset(mutect.files,tumor_name==samp)
-  #     }
-  #     
-  #     mut_num <- mut_threshold
-  #     if(is.data.frame(mutect.file)) mut_num <- nrow(mutect.file)
-  #       
-  #     if(mut_num >= mut_threshold){
-  #     d <- ssSignature(mutect.file,
-  #                      output_dir,
-  #                      input_tool = input_tool,
-  #                      pat = pat,
-  #                      mut_threshold = mut_threshold,
-  #                      ppt_pie = ppt_pie,
-  #                      pie_rad = pie_rad[ind],
-  #                      tri.counts.method = tri.counts.method,
-  #                      just_pie = just_pie)
-  #     if(just_pie) {
-  #       tmp <- list(d)
-  #       names(tmp) <- samp
-  #       if(samp == samples[1]){
-  #         pies <- tmp
-  #       } else {
-  #         pies <- c(pies,tmp)
-  #       }
-  #     }
-  #     
-  #     if((!exists("combined_weights_low_vaf"))) {
-  #       combined_weights_low_vaf <- d$VAF_low
-  #       combined_weights_high_vaf <- d$VAF_high } else {
-  #         
-  #         combined_weights_low_vaf <- rbind(combined_weights_low_vaf,d$VAF_low);
-  #         combined_weights_high_vaf <- rbind(combined_weights_high_vaf,d$VAF_high);
-  #         
-  #       }
-  #     } else if(just_pie) {
-  #       tmp <- list(NA)
-  #       
-  #       names(tmp) <- samp
-  #       if(samp == samples[1]){
-  #         pies <- tmp
-  #       } else {
-  #         pies <- c(pies,tmp)
-  #       }
-  #     }
-  #   }
-  #   
-  # } else {
-    
+
     ind = 0
     
     for(mutect.file in mutect.files) {
@@ -652,11 +409,6 @@ custom_makePie <- function (sigs.output, sub = "", add.color = NULL, x_pos, y_po
     top.title <- paste(rownames(weights), " -- ", sub, sep = "")
   }
   
-  #graphics::pie(t(weights), col = factor(colnames(weights), 
-  #                                       levels = unique(colnames(weights))), labels = colnames(weights), 
-  #              main = top.title,
-  #              radius = radius)
-  
   add_pie(t(weights), col = factor(colnames(weights), 
                                    levels = unique(colnames(weights))), labels = colnames(weights), 
           main = top.title,
@@ -670,28 +422,6 @@ add_pie <- function (x, labels = names(x), edges = 200, radius = 0.8, clockwise 
                        init.angle = if (clockwise) 90 else 0, density = NULL, angle = 45, 
                        col = NULL, border = NULL, lty = NULL, main = NULL, x_pos, y_pos, ...) 
 {
-  
-  ## Development ##
-  
-  # x = t(weights)
-  # col = factor(colnames(weights), 
-  #              levels = unique(colnames(weights)))
-  # levels = unique(colnames(weights))
-  # labels = colnames(weights)
-  # main = top.title
-  # x_pos = x_pos
-  # y_pos = y_pos
-  # radius = radius
-  # 
-  # edges = 200
-  # clockwise = FALSE
-  # init.angle = if (clockwise) 90 else 0
-  # density = NULL
-  # angle = 45
-  # border = NULL
-  # lty = NULL
-  ########
-  
   
   if (!is.numeric(x) || any(is.na(x) | x < 0)) 
     stop("'x' values must be positive.")
@@ -744,10 +474,7 @@ add_pie <- function (x, labels = names(x), edges = 200, radius = 0.8, clockwise 
     
 
     P <- t2xy(seq.int(x[i], x[i + 1], length.out = n))
-    
-    # polygon(c(P$x, 0), c(P$y, 0), density = density[i], 
-    #         angle = angle[i], border = border[i], col = col[i], 
-    #         lty = lty[i])
+
     
     polygon(c(P$x, x_pos), c(P$y, y_pos+radius), density = density[i], 
             angle = angle[i], border = border[i], col = col[i], 
@@ -755,13 +482,7 @@ add_pie <- function (x, labels = names(x), edges = 200, radius = 0.8, clockwise 
     
     P <- t2xy(mean(x[i + 0:1]))
     lab <- as.character(labels[i])
-    # if (!is.na(lab) && nzchar(lab)) {
-    #   lines(c(1, 1.05) * P$x, c(1, 1.05) * P$y)
-    #   
-    #    text(1.1 * P$x, 1.1 * P$y, labels[i], xpd = TRUE, 
-    #         adj = ifelse(P$x < 0, 1, 0), ...)
-    # }
+   
+     
   }
- # title(main = main, ...)
-#  invisible(NULL)
 }
