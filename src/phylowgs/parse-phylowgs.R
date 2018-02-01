@@ -14,7 +14,7 @@ all.patients <- list()
 
 ## prep sample names
 for ( i in 1:length(samples)){
-  assign(paste(prefix,i,sep=""), samples[[i]])
-  all.patients <-list.append(all.patients, get(paste(prefix,i,sep="")))
+  assign(paste(sample.prefix,i,sep=""), samples[[i]])
+  all.patients <-list.append(all.patients, get(paste(sample.prefix, i, sep="")))
 }
 
