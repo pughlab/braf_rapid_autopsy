@@ -13,7 +13,6 @@ processFile <- function(filepath) {
     }
     line<-unlist(strsplit(line, split = ","))
     lines<-list.append(lines,line)
-    print('hi2')
    
   }
   
