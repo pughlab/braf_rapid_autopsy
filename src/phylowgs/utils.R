@@ -145,14 +145,14 @@ annotateCNVs <- function(BRAF_Nodes_cnvs, sample_name, outdir){
   
   annotate.dir <- paste(outdir, '/annotations',sep='')
   dir.create(annotate.dir)
-  setwd(annotate.dir)
+  
   for(k in 1:length(BRAF_Nodes_cnvs)){
     
     linex <- c()
     line2 <- c()
     
     node <- paste("Node_",k,sep="")
-    outfile <- paste(sample_name,"_" ,node,".bed" ,sep="" )
+    outfile <- paste(annotate.dir,'/',sample_name,"_" ,node,".bed" ,sep="" )
     #absCN <- as.numeric(unlist(BRAF_Nodes_cnvs[[k]]["A"])) + as.numeric(unlist(BRAF_Nodes_cnvs[[k]]["B"]))
     
     line2$chr <- as.numeric(paste(unlist(BRAF_Nodes_cnvs[[k]]["Chromosome"])))

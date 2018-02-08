@@ -5,8 +5,11 @@ library(plotrix)
 library(data.table)
 library(gtools)
 library(RColorBrewer)
+library(rprojroot)
 
-config.path <- paste(getwd(), "/config.R",sep="")
+root_dir = rprojroot::find_rstudio_root_file()
+
+config.path <- paste(root_dir, "/src/config.R",sep="")
 source(config.path, local = TRUE)
 
 samples <- processFile(samples)
@@ -42,8 +45,10 @@ for (j in 1:length(all.patients)){
     private.snvs <- findPrivateSNVs(maf.file)
     
     best.index <- calcInconsistenyScore(mutass.file ,top.indeces, private.snvs, ssms.file )
+    print(paste('******* Best index for ', patient_name, ':',best.index))
   }else{
     best.index = index[patient_name]
+    
   }
 
   BRAF_Nodes  <- parsePhyloWGS(mutass.file , best.index, ssms.file, cnvs.file, maf.file)
