@@ -23,6 +23,7 @@ names(index) <- samplelist
 
 
 maf.dir <- paste(input.dir, "/mafs",sep="" )
+ccf.dir <- paste(input.dir, "/ccfs",sep="" )
 witness.data <- "~/witness_dec6" #hard-coded for now
 
 

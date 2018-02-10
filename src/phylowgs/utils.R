@@ -28,6 +28,7 @@ parsePhyloWGS <- function(mutass.file,
                           cnvs.file = "",
                           maf.file="") { 
   
+ 
   CNV <- !(cnvs.file=="")
   ssm_loci <- read.table(ssms.file,
                          header=TRUE,
@@ -66,11 +67,13 @@ parsePhyloWGS <- function(mutass.file,
       CNs <- unlist(strsplit(CNs,"="))
       CNs <- unlist(strsplit(CNs,";"))
       
+      
       cnv_loci$Chromosome[1:nrow(cnv_loci)] <- CNs[seq(2,length(CNs),by=12)]
       cnv_loci$Start.Position[1:nrow(cnv_loci)] <- CNs[seq(4,length(CNs),by=12)]
       cnv_loci$End.Position[1:nrow(cnv_loci)] <- CNs[seq(6,length(CNs),by=12)]
       cnv_loci$A[1:nrow(cnv_loci)] <- CNs[seq(8,length(CNs),by=12)]
       cnv_loci$B[1:nrow(cnv_loci)] <- CNs[seq(10,length(CNs),by=12)]
+      
     }
   }
   
@@ -278,3 +281,42 @@ calcInconsistenyScore <- function(mutass.file,top.indeces, private.snvs, ssms.fi
   return (index)
   
 }
+
+
+#############################################################################################################################
+generateCBio <- function( tumors, BRAF_Nodes_ssms, BRAF_Nodes_cnvs, maf.file, ccf.file){
+  cbio.maf <- read.table(maf.file, sep="\t", quote="", comment.char="#", header=TRUE)
+  cbio.maf$Genome_Position <- paste(cbio.maf$Chromosome, "_",cbio.maf$Start_Position, sep= "")
+  cbio.maf[,c("CLONAL_NODE", "CANCER_CELL_FRACTION")] <- 0
+  CCF.mat<- read.table(ccf.file)
+  
+  
+  for(k in 1:length(tumors)){
+    tumor_barcode <- trimws(tumors[k])
+    sample_maf <- cbio.maf[cbio.maf$Tumor_Sample_Barcode == tumor_barcode,]
+    
+    colnames(CCF.mat) <- c("NodeID", unlist(tumors))
+    
+    rname <- c()
+    for(ii in 1:length(BRAF_Nodes_cnvs)){
+      rname <- c(rname, paste("Node",ii,sep=""))
+    }
+    row.names(CCF.mat) <- rname
+    CCF.mat2 <- CCF.mat[,-c(1)]
+    CCF.mat3 <- t(CCF.mat2)
+    
+    for(m in 1:length(BRAF_Nodes_cnvs)){
+      node <- paste("Node",m,sep="")
+      genes.this.node <- as.list(as.character(unlist(list(BRAF_Nodes_ssms[[m]]["Hugo_Symbol"]))))
+      
+      if( nrow(cbio.maf[cbio.maf$Tumor_Sample_Barcode == tumor_barcode & cbio.maf$Hugo_Symbol %in% genes.this.node,]) > 0){
+        cbio.maf[cbio.maf$Tumor_Sample_Barcode == tumor_barcode & cbio.maf$Hugo_Symbol %in% genes.this.node,]$CANCER_CELL_FRACTION <- as.numeric(CCF.mat3[tumor_barcode, m])
+        cbio.maf[cbio.maf$Tumor_Sample_Barcode == tumor_barcode & cbio.maf$Hugo_Symbol %in% genes.this.node,]$CLONAL_NODE <- node
+      }
+      
+    }
+    
+  }
+  return(cbio.maf)
+}
+
