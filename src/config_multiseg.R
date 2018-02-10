@@ -1,0 +1,2 @@
+input.dir <- ""
+maf.dir   <- ""
