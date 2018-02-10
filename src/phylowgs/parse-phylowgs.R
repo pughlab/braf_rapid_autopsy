@@ -9,7 +9,7 @@ library(rprojroot)
 
 root_dir = rprojroot::find_rstudio_root_file()
 
-config.path <- paste(root_dir, "/src/config.R",sep="")
+config.path <- paste(root_dir, "/src/config_phylowgs.R",sep="")
 source(config.path, local = TRUE)
 
 samples <- processFile(samples)
