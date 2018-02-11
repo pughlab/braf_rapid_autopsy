@@ -1,0 +1,2 @@
+"cellularity"	"ploidy"	"SLPP"
+0.64	2.3	0.756313824763461
