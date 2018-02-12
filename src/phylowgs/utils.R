@@ -320,3 +320,17 @@ generateCBio <- function( tumors, BRAF_Nodes_ssms, BRAF_Nodes_cnvs, maf.file, cc
   return(cbio.maf)
 }
 
+removeBottomIndecies<-function(mutass.file, top.indeces){
+  mutass_dir <- gsub(".zip","",mutass.file)
+  
+  files <- list.files(mutass_dir , pattern = ".json$")
+  top.indeces <- paste(top.indeces,".json",sep="")
+  
+  for (fn in files){
+    if (!(fn %in% top.indeces)){
+      
+      file.remove(paste(mutass_dir,"/",fn,sep=""))
+    }
+  }
+  
+}
